@@ -1,0 +1,1249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="34">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>51</ID>
+      <Description>"Initialize Mono (ACTIVATE BEFORE ANYTHING)"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <Color>0000FF</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+if process == nil then
+   local msg = 'No process detected.'
+   print(msg)
+   error(msg)
+   return
+end
+
+mono_initialize()
+LaunchMonoDataCollector()
+local monoMain,pupInv = 'Assembly-CSharp','PowerupInventory';
+local speed = mono_findMethod(monoMain,pupInv,'GetSpeedMultiplier')
+mono_compile_method(speed)
+local atkspeed = mono_findMethod(monoMain,pupInv,'GetAttackSpeedMultiplier')
+mono_compile_method(atkspeed)
+local damage = mono_findMethod(monoMain,pupInv,'GetStrengthMultiplier')
+mono_compile_method(damage)
+local range = mono_findMethod(monoMain,'HitBox','UseHitbox')
+mono_compile_method(range)
+local dropitem = mono_findMethod(monoMain,'ClientSend','DropItem')
+mono_compile_method(dropitem)
+local health = mono_findMethod(monoMain,'PlayerStatus','Healing')
+mono_compile_method(health)
+local stamina = mono_findMethod(monoMain,'PlayerStatus','Stamina')
+mono_compile_method(stamina)
+local hunger = mono_findMethod(monoMain,'PlayerStatus','Hunger')
+mono_compile_method(hunger)
+local jump = mono_findMethod(monoMain,'PlayerMovement','Jump')
+mono_compile_method(jump)
+local zooming = mono_findMethod(monoMain,'PlayerMovement','Movement')
+mono_compile_method(zooming)
+local arrow = mono_findMethod(monoMain,'UseInventory','ReleaseWeapon')
+mono_compile_method(arrow)
+local myinput = mono_findMethod(monoMain,'PlayerInput','MyInput')
+mono_compile_method(myinput)
+local use = mono_findMethod(monoMain,'UseInventory','Use')
+mono_compile_method(use)
+local usebuttonup = mono_findMethod(monoMain,'UseInventory','UseButtonUp')
+mono_compile_method(usebuttonup)
+local repair = mono_findMethod(monoMain,'RepairInteract','Interact')
+mono_compile_method(repair)
+local freechest = mono_findMethod(monoMain,'LootContainerInteract','Interact')
+mono_compile_method(freechest)
+local lightning = mono_findMethod(monoMain,'PowerupInventory','GetLightningMultiplier')
+mono_compile_method(lightning)
+
+{$asm}
+[DISABLE]
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>52</ID>
+          <Description>"Base Speed"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>PowerupInventory:GetSpeedMultiplier+190</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>53</ID>
+          <Description>"Base Attack Speed"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>PowerupInventory:GetAttackSpeedMultiplier+180</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>81</ID>
+          <Description>"Base Damage"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>PowerupInventory:GetStrengthMultiplier+220</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>91</ID>
+          <Description>"Base Jump Power"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>PowerupInventory:GetJumpMultiplier+100</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>107</ID>
+          <Description>"HP Always Full"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048,PlayerStatus:Healing+f) 
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+mov [newmem+100],rbx
+mov ebx,[rsi+54]
+cvtsi2ss xmm0,ebx
+movss [rsi+50],xmm0
+mov rbx,[newmem+100]
+
+originalcode:
+movss xmm0,[rsi+50]
+
+exit:
+jmp returnhere
+
+PlayerStatus:Healing+f:
+jmp newmem
+returnhere:
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+PlayerStatus:Healing+f:
+movss xmm0,[rsi+50]
+//Alt: db F3 0F 10 46 50
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>112</ID>
+          <Description>"No Hunger"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048,PlayerStatus:Hunger+f) 
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+mov dword ptr [rsi+6C],(float)100
+
+originalcode:
+movss xmm0,[rsi+6C]
+
+exit:
+jmp returnhere
+
+PlayerStatus:Hunger+f:
+jmp newmem
+returnhere:
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+PlayerStatus:Hunger+f:
+movss xmm0,[rsi+6C]
+//Alt: db F3 0F 10 46 6C
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>110</ID>
+          <Description>"Unlimited Stamina"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048,PlayerStatus:Stamina+73) 
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+mov dword ptr[rsi+64],(float)100
+
+originalcode:
+mov [rbp-40],rsi
+comisd xmm1,xmm0
+
+exit:
+jmp returnhere
+
+PlayerStatus:Stamina+73:
+jmp newmem
+nop 3
+returnhere:
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+PlayerStatus:Stamina+73:
+mov [rbp-40],rsi
+comisd xmm1,xmm0
+//Alt: db 48 89 75 C0 66 0F 2F C8
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>95</ID>
+          <Description>"Unlimited Jumps"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048,PlayerMovement:Jump+3b) 
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+
+originalcode:
+movzx eax,byte ptr [rsi+7C]
+mov eax,FF
+test eax,eax
+
+exit:
+jmp returnhere
+
+PlayerMovement:Jump+3b:
+jmp newmem
+nop
+returnhere:
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+PlayerMovement:Jump+3b:
+movzx eax,byte ptr [rsi+7C]
+test eax,eax
+//Alt: db 0F B6 46 7C 85 C0
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>96</ID>
+          <Description>"Zooming"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048,PlayerMovement:Movement+99b) 
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+
+originalcode:
+mov [rbp-00000408],(float)250
+movss xmm0,[rbp-00000408]
+//mulss xmm0,[newmem+100]
+
+exit:
+jmp returnhere
+
+PlayerMovement:Movement+99b:
+jmp newmem
+nop 3
+returnhere:
+
+newmem+100:
+dd (float)100
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+PlayerMovement:Movement+99b:
+movss xmm0,[rbp-00000408]
+//Alt: db F3 0F 10 85 F8 FB FF FF
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>120</ID>
+          <Description>"Infinite Reach"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+aobscanregion(infran,HitBox:UseHitbox,HitBox:UseHitbox+300,F3 0F 5A C0 F3 0F 10 88 C4 00 00 00)
+registersymbol(infran)
+alloc(newmem,512,HitBox:UseHitbox+16b)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+
+originalcode:
+movsd xmm0,[newmem+100]
+movss xmm1,[rax+000000C4]
+
+exit:
+jmp returnhere
+
+infran:
+jmp newmem
+nop 7
+returnhere:
+
+newmem+100:
+dq (double)10000 //not really infinte but bigger than render distance
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+infran:
+cvtss2sd xmm0,xmm0
+movss xmm1,[rax+000000C4]
+//Alt: db F3 0F 5A C0 F3 0F 10 88 C4 00 00 00
+unregistersymbol(infran)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>114</ID>
+          <Description>"Mine/Chop All"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+aobscanregion(mineall,HitBox:UseHitbox+800,HitBox:UseHitbox+C00,75 20 48 8B 85 B0 FD FF FF)
+registersymbol(mineall)
+
+mineall:
+db 90 90
+
+mineall+20:
+db EB
+
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+
+mineall:
+db 75 20
+
+mineall+20:
+db 7D
+
+unregistersymbol(mineall)
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>98</ID>
+          <Description>"No Arrow Use"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+UseInventory:ReleaseWeapon+38c:
+nop 7
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+UseInventory:ReleaseWeapon+38c:
+mov [r15+000000B0],eax
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>100</ID>
+          <Description>"Spam Arrows (Use with Insta-Bow)"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048,PlayerInput:MyInput+39e) 
+label(returnhere)
+label(originalcode)
+label(exit)
+label(usebuttonup)
+label(use)
+
+UseInventory:UseButtonUp:
+usebuttonup:
+
+UseInventory:Use:
+use:
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+
+originalcode:
+mov [newmem+108],rcx
+mov r11,use
+call r11
+mov rcx,[newmem+108]
+mov [newmem+100],rax
+mov r11,usebuttonup
+call r11
+mov rax,[newmem+100]
+
+
+exit:
+jmp returnhere
+
+PlayerInput:MyInput+39e:
+jmp newmem
+nop 5
+nop 3
+returnhere:
+
+registersymbol(use)
+
+label(return2)
+label(isbow)
+label(default)
+alloc(mem2,512,UseInventory:UseButtonUp)
+UseInventory:UseButtonUp+f8:
+jmp mem2
+return2:
+
+mem2:
+call r11
+//test eax,eax
+mov [mem2+100],eax
+mov rax,[rsi+78]
+test rax,rax
+je default
+mov eax,[rax+88]
+sub eax,9
+test eax,eax
+je isbow
+mov eax,0
+test eax,eax
+mov eax,[mem2+100]
+jmp return2
+isbow:
+mov eax,1
+test eax,eax
+mov eax,[mem2+100]
+jmp return2
+default:
+mov eax,[mem2+100]
+test eax,eax
+jmp return2
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+PlayerInput:MyInput+39e:
+mov r11,use
+call r11
+
+unregistersymbol(use)
+//Alt: db 49 BB 40 87 94 D5 F6 01 00 00
+
+UseInventory:UseButtonUp+f8:
+call r11
+test eax,eax
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>103</ID>
+          <Description>"Insta-Bow"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048,UseInventory:ReleaseWeapon+193) 
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+mov dword ptr[rbp-00000224],(float)1
+
+originalcode:
+movss xmm0,[rbp-00000224]
+
+exit:
+jmp returnhere
+
+UseInventory:ReleaseWeapon+193:
+jmp newmem
+nop 3
+returnhere:
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+UseInventory:ReleaseWeapon+193:
+movss xmm0,[rbp-00000224]
+//Alt: db F3 0F 10 85 DC FD FF FF
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>116</ID>
+          <Description>"Free Chests"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(newmem,2048,LootContainerInteract:Interact+33) 
+label(returnhere)
+label(originalcode)
+label(exit)
+
+newmem: //this is allocated memory, you have read,write,execute access
+//place your code here
+mov dword ptr [rsi+30],0
+
+originalcode:
+movsxd  rcx,dword ptr [rsi+30]
+cmp eax,ecx
+
+exit:
+jmp returnhere
+
+LootContainerInteract:Interact+33:
+jmp newmem
+nop
+returnhere:
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(newmem)
+LootContainerInteract:Interact+33:
+movsxd  rcx,dword ptr [rsi+30]
+cmp eax,ecx
+//Alt: db 48 63 4E 30 3B C1
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>121</ID>
+          <Description>"Free Boat Repair"</Description>
+          <LastState/>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+RepairInteract:Interact+35:
+nop 2
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+RepairInteract:Interact+35:
+db 74 14
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>67</ID>
+      <Description>"Selected Item"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+assert(BuildManager:NewestBuild+234,48 8B 50 30 48 8D 64 24 00)
+alloc(selItem,128,BuildManager:NewestBuild)
+registersymbol(selItem)
+label(returnhere)
+label(originalcode)
+label(exit)
+
+selItem: //this is allocated memory, you have read,write,execute access
+//place your code here
+
+originalcode:
+mov rdx,[rax+30]
+mov [selItem+40],rdx
+lea rsp,[rsp+00]
+
+exit:
+jmp returnhere
+
+BuildManager:NewestBuild+234:
+jmp selItem
+nop 4
+returnhere:
+
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+unregistersymbol(selItem)
+dealloc(selItem)
+BuildManager:NewestBuild+234:
+db 48 8B 50 30 48 8D 64 24 00
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>69</ID>
+          <Description>"Id"</Description>
+          <DropDownList DisplayValueAsItem="1">0:Bark
+1:Chest
+2:Coal
+3:Coin
+4:Flint
+5:Adamantite Boots
+6:Chunkium Boots
+7:Gold Boots
+8:Mithril Boots
+9:Obamium Boots
+10:Steel Boots
+11:Wolfskin Boots
+12:Adamantite Helmet
+13:Chunkium Helmet
+14:Gold Helmet
+15:Mithril Helmet
+16:Obamium Helmet
+17:Steel Helmet
+18:Wolfskin Helmet
+19:Adamantite Pants
+20:Chunkium Pants
+21:Gold Pants
+22:Mithril Pants
+23:Obamium Pants
+24:Steel Pants
+25:Wolfskin Pants
+26:Adamantite Chestplate
+27:Chunkium Chestplate
+28:Gold Chestplate
+29:Mithril Chestplate
+30:Obamium Chestplate
+31:Steel Chestplate
+32:Wolfskin Chestplate
+33:Wood Doorway
+34:Wood Doorway
+35:Wood Floor
+36:Wood Pole
+37:Wood Pole
+38:Wood Roof
+39:Wood stairs
+40:Wood stairs thinn
+41:Wood Wall
+42:Wood Wall Half
+43:Wood Wall Tilted
+44:Torch
+45:Red Apple
+46:Bowl
+47:Dough
+48:Flax Fibers
+49:Flax
+50:Raw Meat
+51:Gulpon Shroom
+52:Ligon Shroom
+53:Slurbon Shroom
+54:Sugon Shroom
+55:Wheat
+56:Bread
+57:Cooked Meat
+58:Apple Pie
+59:Meat Pie
+60:Meat Soup
+61:Purple Soup
+62:Red Soup
+63:Weird Soup
+64:Yellow Soup
+65:AncientCore
+66:Adamantite bar
+67:Chunkium bar
+68:Gold bar
+69:Iron bar
+70:Mithril bar
+71:Obamium bar
+72:Ancient Bone
+73:Dragonball
+74:Fireball
+75:Lightningball
+76:Rock Projectile
+77:Rock Projectile
+78:Gronk Projectile
+79:Spike Attack
+80:Gronk Projectile
+81:Waterball
+82:Windball
+83:Adamantite Ore
+84:Chunkium Ore
+85:Gold Ore
+86:Iron Ore
+87:Mithril Ore
+88:Obamium Ore
+89:Ruby
+90:Rock
+91:Birch Wood
+92:Dark Oak Wood
+93:Fir Wood
+94:Wood
+95:Oak Wood
+96:Anvil
+97:Cauldron
+98:Fletching Table
+99:Furnace
+100:Workbench
+101:Boat Map
+102:Gem Map
+103:Blue Gem
+104:Green Gem
+105:Pink Gem
+106:Red Gem
+107:Yellow Gem
+108:Adamantite Axe
+109:Gold Axe
+110:Mithril Axe
+111:Steel Axe
+112:Wood Axe
+113:Oak Bow
+114:Wood Bow
+115:Birch bow
+116:Fir bow
+117:Ancient Bow
+118:Adamantite Pickaxe
+119:Gold Pickaxe
+120:Mithril Pickaxe
+121:Steel Pickaxe
+122:Wood Pickaxe
+123:Rope
+124:Shovel
+125:Adamantite Sword
+126:Gold Sword
+127:Mithril Sword
+128:Obamium Sword
+129:Steel Sword
+130:milk
+131:Adamantite Arrow
+132:Fire arrow
+133:Flint Arrow
+134:Lightning Arrow
+135:Mithril Arrow
+136:Steel Arrow
+137:Water Arrow
+138:Chiefs Spear
+139:Chunky Hammer
+140:Gronks Sword
+141:Gronks Sword Projectile
+142:Night Blade
+143:Wyvern Dagger
+144:Black Shard
+145:Blade
+146:Hammer Shaft
+147:Spear Tip
+148:Sword Hilt
+149:Wolf Claws
+150:Wolfskin
+</DropDownList>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>selItem+40</Address>
+          <Offsets>
+            <Offset>84</Offset>
+          </Offsets>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>68</ID>
+          <Description>"Amount"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>selItem+40</Address>
+          <Offsets>
+            <Offset>B0</Offset>
+          </Offsets>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>77</ID>
+      <Description>"Spawn Item"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(spawnItem,2048,PowerupInventory:GetSpeedMultiplier+29)
+registersymbol(spawnItem)
+label(returnhere)
+label(originalcode)
+label(exit)
+label(drIt)
+label(skipcall)
+
+ClientSend:DropItem:
+drIt:
+registersymbol(drIt)
+
+spawnItem: //this is allocated memory, you have read,write,execute access
+//place your code here
+
+mov [spawnItem+100],rax
+mov [spawnItem+108],rcx
+mov [spawnItem+110],rdx
+mov [spawnItem+118],r11
+movsxd rcx,dword ptr[spawnItem+200]
+movsxd rdx,dword ptr[spawnItem+204]
+lahf
+test rdx,rdx
+je skipcall
+mov r11,drIt
+call r11
+mov [spawnItem+204],0
+skipcall:
+sahf
+mov rax,[spawnItem+100]
+mov rcx,[spawnItem+108]
+mov rdx,[spawnItem+110]
+mov r11,[spawnItem+118]
+
+originalcode:
+mov rax,[rax]
+mov rax,[rax+70]
+
+exit:
+jmp returnhere
+
+PowerupInventory:GetSpeedMultiplier+29:
+jmp spawnItem
+nop 2
+returnhere:
+
+
+
+
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(spawnItem)
+PowerupInventory:GetSpeedMultiplier+29:
+mov rax,[rax]
+mov rax,[rax+70]
+unregistersymbol(spawnItem)
+unregistersymbol(drIt)
+//Alt: db 48 8B 00 48 8B 40 70
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>78</ID>
+          <Description>"Id"</Description>
+          <DropDownList DisplayValueAsItem="1">0:Bark
+1:Chest
+2:Coal
+3:Coin
+4:Flint
+5:Adamantite Boots
+6:Chunkium Boots
+7:Gold Boots
+8:Mithril Boots
+9:Obamium Boots
+10:Steel Boots
+11:Wolfskin Boots
+12:Adamantite Helmet
+13:Chunkium Helmet
+14:Gold Helmet
+15:Mithril Helmet
+16:Obamium Helmet
+17:Steel Helmet
+18:Wolfskin Helmet
+19:Adamantite Pants
+20:Chunkium Pants
+21:Gold Pants
+22:Mithril Pants
+23:Obamium Pants
+24:Steel Pants
+25:Wolfskin Pants
+26:Adamantite Chestplate
+27:Chunkium Chestplate
+28:Gold Chestplate
+29:Mithril Chestplate
+30:Obamium Chestplate
+31:Steel Chestplate
+32:Wolfskin Chestplate
+33:Wood Doorway
+34:Wood Doorway
+35:Wood Floor
+36:Wood Pole
+37:Wood Pole
+38:Wood Roof
+39:Wood stairs
+40:Wood stairs thinn
+41:Wood Wall
+42:Wood Wall Half
+43:Wood Wall Tilted
+44:Torch
+45:Red Apple
+46:Bowl
+47:Dough
+48:Flax Fibers
+49:Flax
+50:Raw Meat
+51:Gulpon Shroom
+52:Ligon Shroom
+53:Slurbon Shroom
+54:Sugon Shroom
+55:Wheat
+56:Bread
+57:Cooked Meat
+58:Apple Pie
+59:Meat Pie
+60:Meat Soup
+61:Purple Soup
+62:Red Soup
+63:Weird Soup
+64:Yellow Soup
+65:AncientCore
+66:Adamantite bar
+67:Chunkium bar
+68:Gold bar
+69:Iron bar
+70:Mithril bar
+71:Obamium bar
+72:Ancient Bone
+73:Dragonball
+74:Fireball
+75:Lightningball
+76:Rock Projectile
+77:Rock Projectile
+78:Gronk Projectile
+79:Spike Attack
+80:Gronk Projectile
+81:Waterball
+82:Windball
+83:Adamantite Ore
+84:Chunkium Ore
+85:Gold Ore
+86:Iron Ore
+87:Mithril Ore
+88:Obamium Ore
+89:Ruby
+90:Rock
+91:Birch Wood
+92:Dark Oak Wood
+93:Fir Wood
+94:Wood
+95:Oak Wood
+96:Anvil
+97:Cauldron
+98:Fletching Table
+99:Furnace
+100:Workbench
+101:Boat Map
+102:Gem Map
+103:Blue Gem
+104:Green Gem
+105:Pink Gem
+106:Red Gem
+107:Yellow Gem
+108:Adamantite Axe
+109:Gold Axe
+110:Mithril Axe
+111:Steel Axe
+112:Wood Axe
+113:Oak Bow
+114:Wood Bow
+115:Birch bow
+116:Fir bow
+117:Ancient Bow
+118:Adamantite Pickaxe
+119:Gold Pickaxe
+120:Mithril Pickaxe
+121:Steel Pickaxe
+122:Wood Pickaxe
+123:Rope
+124:Shovel
+125:Adamantite Sword
+126:Gold Sword
+127:Mithril Sword
+128:Obamium Sword
+129:Steel Sword
+130:milk
+131:Adamantite Arrow
+132:Fire arrow
+133:Flint Arrow
+134:Lightning Arrow
+135:Mithril Arrow
+136:Steel Arrow
+137:Water Arrow
+138:Chiefs Spear
+139:Chunky Hammer
+140:Gronks Sword
+141:Gronks Sword Projectile
+142:Night Blade
+143:Wyvern Dagger
+144:Black Shard
+145:Blade
+146:Hammer Shaft
+147:Spear Tip
+148:Sword Hilt
+149:Wolf Claws
+150:Wolfskin
+</DropDownList>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>spawnItem+200</Address>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>79</ID>
+          <Description>"Amount"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>spawnItem+204</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>131</ID>
+      <Description>"Give Powerup"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+{$lua}
+if syntaxcheck then return end
+local addr = getAddress('PowerupInventory:AddPowerup+cb')+2;
+local puinv = readQword(addr);
+local asmstr = 'define(uiinv,(int)'..tostring(puinv)..')';
+addr = getAddress('PowerupInventory:AddPowerup+ab')+2;
+local upd = readQword(addr);
+asmstr = asmstr..'\ndefine(upd,(int)'..tostring(upd)..')';
+--print(asmstr)
+return asmstr;
+{$asm}
+alloc(addpowerup,2048,PowerupInventory:GetSpeedMultiplier+13)
+registersymbol(addpowerup)
+label(returnhere)
+label(originalcode)
+label(exit)
+label(restore)
+label(uiaddpowerup)
+label(psupdatestats)
+
+
+PowerupUI:AddPowerup:
+uiaddpowerup:
+
+PlayerStatus:UpdateStats:
+psupdatestats:
+
+
+addpowerup: //this is allocated memory, you have read,write,execute access
+//place your code here
+test rcx,rcx
+je originalcode
+mov [addpowerup+100],rax
+mov [addpowerup+108],rcx
+mov [addpowerup+110],rdx
+mov [addpowerup+118],r8
+mov [addpowerup+120],r9
+mov [addpowerup+128],r10
+mov rax,uiinv
+mov rax,[rax]
+mov rcx,rax
+mov rdx,dword ptr[addpowerup+150]
+test edx,edx
+jl restore
+cmp dword ptr [rax],00
+mov r11,uiaddpowerup
+call r11
+mov rdx,dword ptr[addpowerup+150]
+mov rcx,[addpowerup+108]
+mov rcx,[rcx+18]
+lea rcx,[rcx+rdx*4+20]
+inc [rcx]
+mov dword ptr[addpowerup+150],-1
+mov rax,upd
+mov rax,[rax]
+mov rcx,rax
+cmp dword ptr [rax],00
+mov r11,psupdatestats
+call r11
+restore:
+mov rax,[addpowerup+100]
+mov rcx,[addpowerup+108]
+mov rdx,[addpowerup+110]
+mov r8,[addpowerup+118]
+mov r9,[addpowerup+120]
+mov r10,[addpowerup+128]
+
+originalcode:
+mov rsi,rdx
+test rsi,rsi
+
+exit:
+jmp returnhere
+
+PowerupInventory:GetSpeedMultiplier+13:
+jmp addpowerup
+nop
+returnhere:
+
+addpowerup+150:
+dd -1
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(addpowerup)
+unregistersymbol(addpowerup)
+PowerupInventory:GetSpeedMultiplier+13:
+mov rsi,rdx
+test rsi,rsi
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>132</ID>
+          <Description>"Powerup Id"</Description>
+          <DropDownList DisplayValueAsItem="1">-1:None
+0:Broccoli
+1:Dumbbell
+2:Jetpack
+3:Orange Juice
+4:Peanut Butter
+5:Blue Pill
+6:Red Pill
+7:Sneakers
+8:Robin Hood Hat
+9:Spooo Bean
+10:Bulldozer
+11:Horseshoe
+12:Danis Milk
+13:Piggy Bank
+14:Crimson Dagger
+15:Dracula
+16:Janniks Frog
+17:Juice
+18:Adrenaline
+19:Berserk
+20:Checkered Shirt
+21:Sniper Scope
+22:Knuts Hammer
+23:Wings of Glory
+24:Enforcer
+</DropDownList>
+          <ShowAsSigned>1</ShowAsSigned>
+          <VariableType>4 Bytes</VariableType>
+          <Address>addpowerup+150</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>125</ID>
+      <Description>"Lightning Damage Multiplier"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(lightningD,4,PowerupInventory:GetLightningMultiplier)
+registersymbol(lightningD)
+PowerupInventory:GetLightningMultiplier+171:
+movss xmm0,[lightningD]
+
+lightningD:
+dd (float)2
+
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(lightningD)
+unregistersymbol(lightningD)
+PowerupInventory:GetLightningMultiplier+171:
+addsd xmm0,xmm1
+cvtsd2ss xmm0,xmm0
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>126</ID>
+          <Description>"Value"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>lightningD</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>127</ID>
+      <Description>"Lightning Chance"</Description>
+      <Options moHideChildren="1"/>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+//code from here to '[DISABLE]' will be used to enable the cheat
+alloc(lightningC,4,PowerupInventory:GetLightningMultiplier)
+registersymbol(lightningC)
+PowerupInventory:GetLightningMultiplier+bb:
+movss xmm5,[lightningC]
+
+PowerupInventory:GetLightningMultiplier+6c:
+db EB
+
+lightningC:
+dd (float)1
+ 
+ 
+[DISABLE]
+//code from here till the end of the code will be used to disable the cheat
+dealloc(lightningC)
+unregistersymbol(lightningC)
+PowerupInventory:GetLightningMultiplier+bb:
+cvtss2sd xmm0,xmm0
+cvtsd2ss xmm5,xmm0
+
+PowerupInventory:GetLightningMultiplier+6c:
+db 7F
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>128</ID>
+          <Description>"Value (1 = 100%)"</Description>
+          <ShowAsSigned>0</ShowAsSigned>
+          <VariableType>Float</VariableType>
+          <Address>lightningC</Address>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols>
+    <SymbolEntry>
+      <Name>speed</Name>
+      <Address>20105CE71E0</Address>
+    </SymbolEntry>
+    <SymbolEntry>
+      <Name>atkrate</Name>
+      <Address>20105D092C0</Address>
+    </SymbolEntry>
+  </UserdefinedSymbols>
+</CheatTable>
